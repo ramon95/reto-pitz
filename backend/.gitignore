@@ -1,0 +1,22 @@
+# Secrets
+.env
+config/master.key
+config/credentials/*.key
+
+# Logs & temp
+log/*
+tmp/*
+!log/.keep
+!tmp/.keep
+!tmp/pids/.keep
+!tmp/storage/.keep
+
+# Storage
+storage/*
+!storage/.keep
+
+# Dependencies
+vendor/bundle
+
+# System
+.DS_Store
