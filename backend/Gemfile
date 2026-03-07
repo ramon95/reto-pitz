@@ -1,0 +1,28 @@
+source "https://rubygems.org"
+
+gem "rails", "~> 7.2.3"
+gem "pg", "~> 1.1"
+gem "puma", ">= 5.0"
+gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "bootsnap", require: false
+
+# CORS
+gem "rack-cors"
+
+# Paginación
+gem "pagy"
+
+# Variables de entorno
+gem "dotenv-rails"
+
+# Soft deletes
+gem "discard"
+
+group :development, :test do
+  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem "brakeman", require: false
+  gem "rubocop-rails-omakase", require: false
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
+end
