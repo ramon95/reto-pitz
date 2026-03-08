@@ -31,6 +31,38 @@ Sistema de gestión de productos (CRUD) construido con Ruby on Rails (API REST) 
 
 ## Instalación y puesta en marcha
 
+### Opción A — Docker (recomendado)
+
+```bash
+git clone <repo-url>
+cd pitz-reto
+
+# Levantar backend, frontend y PostgreSQL con un solo comando
+docker compose up --build
+```
+
+| Servicio | URL |
+|---|---|
+| Frontend | http://localhost:5173 |
+| API | http://localhost:3001/api/v1 |
+| PostgreSQL | localhost:5432 |
+
+En la primera ejecución hay que crear la base de datos y correr las migraciones:
+
+```bash
+docker compose exec backend rails db:create db:migrate db:seed
+```
+
+Para detener todos los servicios:
+
+```bash
+docker compose down
+```
+
+---
+
+### Opción B — Instalación local
+
 ### 1. Clonar el repositorio
 
 ```bash
@@ -264,6 +296,9 @@ La lógica de paginación vive en `app/controllers/concerns/paginatable.rb` en l
 ### `rescue_from` en ApplicationController
 El manejo de `ActiveRecord::RecordNotFound` y `ActionController::ParameterMissing` está centralizado en `ApplicationController` con `rescue_from`, siguiendo la convención Rails en lugar de rescues inline en cada acción.
 
+### Docker Compose para desarrollo
+Tres servicios orquestados: `postgres:16`, backend Rails y frontend Vite. Los volúmenes montan el código fuente en el contenedor para que los cambios se reflejen en caliente sin reconstruir la imagen. `bundle_cache` y `node_modules` son volúmenes separados para evitar que el bind mount del host los sobreescriba. El servicio de postgres incluye un healthcheck para que el backend solo arranque cuando la base de datos está lista.
+
 ### TanStack React Query
 Gestiona el cache del servidor, estados de loading/error y la invalidación automática al mutar datos. Evita estado global innecesario (Redux, Zustand) para un CRUD de esta escala.
 
@@ -285,7 +320,11 @@ En lugar de mockear módulos de axios/fetch, MSW intercepta las peticiones HTTP 
 
 ```
 pitz-reto/
+├── docker-compose.yml                     # orquesta postgres, backend y frontend
+├── docs/
+│   └── openapi.yml                        # especificación OpenAPI 3.0
 ├── backend/
+│   ├── Dockerfile
 │   ├── app/
 │   │   ├── controllers/
 │   │   │   ├── concerns/paginatable.rb        # concern de paginación
@@ -305,6 +344,7 @@ pitz-reto/
 │       ├── models/product_spec.rb             # 39 tests
 │       └── requests/api/v1/products_spec.rb   # 23 tests
 └── frontend/
+    ├── Dockerfile
     └── src/
         ├── types/product.ts                   # interfaces TypeScript
         ├── services/api.ts                    # cliente Axios
@@ -332,9 +372,7 @@ pitz-reto/
 
 Con más tiempo implementaría:
 
-1. **Dockerización** — `docker-compose.yml` para levantar backend, frontend y PostgreSQL con un solo comando.
-2. **Documentación de API** — Swagger/OpenAPI con `rswag` para documentación interactiva generada desde los tests.
-3. **Optimistic updates** — actualizar la UI antes de que el servidor responda para mejor UX percibida.
-4. **Restaurar desde el frontend** — botón de "Restaurar" accesible para productos eliminados.
-5. **Ordenamiento** — columnas clicables en la tabla para ordenar por nombre, precio, stock, etc.
-6. **Deploy** — Railway para el backend (Rails + PostgreSQL) y Vercel para el frontend.
+1. **Optimistic updates** — actualizar la UI antes de que el servidor responda para mejor UX percibida.
+2. **Restaurar desde el frontend** — botón de "Restaurar" accesible para productos eliminados.
+3. **Ordenamiento** — columnas clicables en la tabla para ordenar por nombre, precio, stock, etc.
+4. **Deploy** — Railway para el backend (Rails + PostgreSQL) y Vercel para el frontend.
